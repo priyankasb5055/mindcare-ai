@@ -63,7 +63,7 @@ const Journal = () => {
   const handleGetPrompt = async () => {
     setIsPromptLoading(true);
     try {
-      const res = await api.post('/ai/journal-prompt', { currentMood: mood });
+      const res = await api.post('/api/ai/journal-prompt', { currentMood: mood });
       if (res.data.success) {
         if (!content) {
           setContent(res.data.data.prompt + '\n\n');
@@ -82,7 +82,7 @@ const Journal = () => {
     try {
       setGeneratingPrompt(true);
 
-      const res = await api.post('/ai/journal-prompt', {
+      const res = await api.post('/api/ai/journal-prompt', {
         currentMood: mood || 'neutral',
       });
 

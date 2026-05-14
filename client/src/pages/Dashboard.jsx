@@ -154,7 +154,7 @@ const Dashboard = () => {
     const getInsight = async () => {
       if (moods.length > 0 || journals.length > 0) {
         try {
-          const res = await api.post('/ai/analyze-mood', {
+          const res = await api.post('/api/ai/analyze-mood', {
             recentMoods: moods.slice(0, 5),
             recentJournals: journals.slice(0, 2)
           });

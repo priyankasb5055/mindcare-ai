@@ -43,7 +43,7 @@ const AICompanion = () => {
     setIsLoading(true);
 
     try {
-      const res = await api.post('/ai/chat', {
+      const res = await api.post('/api/ai/chat', {
         message: text,
         conversationHistory: messages
       });
