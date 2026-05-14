@@ -1,4 +1,5 @@
-import axios from 'axios';
+// Mock AI Controller to provide stock responses instead of calling OpenAI API
+// This avoids the 500 error due to insufficient API quota
 
 export const chatWithAI = async (req, res) => {
   try {
@@ -11,42 +12,18 @@ export const chatWithAI = async (req, res) => {
       });
     }
 
-    const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are MindCare AI, a compassionate mental wellness assistant. Give short supportive responses.',
-          },
-          {
-            role: 'user',
-            content: message,
-          },
-        ],
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
+    // Mock AI Response
+    setTimeout(() => {
+      res.json({
+        success: true,
+        data: {
+          reply: "I hear you, and your feelings are completely valid. I'm here to support you through whatever you're experiencing. Take a deep breath, and remember you're not alone.",
         },
-      }
-    );
-
-    res.json({
-      success: true,
-      data: {
-        reply: response.data.choices[0].message.content,
-      },
-    });
+      });
+    }, 1000);
 
   } catch (error) {
-    console.error(
-      error.response?.data || error.message
-    );
-
+    console.error(error);
     res.status(500).json({
       success: false,
       message: 'Failed to generate AI response',
@@ -59,114 +36,52 @@ export const analyzeMood = async (req, res) => {
     const { recentMoods, recentJournals } = req.body;
 
     const moodData = recentMoods?.map((m) => m.mood).join(', ') || '';
+    const journalData = recentJournals?.map((j) => j.content).join(' ') || '';
+    const combinedText = `${moodData} ${journalData}`.toLowerCase();
 
-    const journalData =
-      recentJournals?.map((j) => j.content).join(' ') || '';
-      const combinedText = `${moodData} ${journalData}`.toLowerCase();
+    const crisisKeywords = [
+      'hopeless', 'suicide', 'kill myself', 'self harm', 'depressed', 
+      'worthless', 'alone', 'die', 'give up', 'empty', 'hate my life', 
+      'panic attack', 'anxiety attack'
+    ];
 
-      const crisisKeywords = [
-        'hopeless',
-        'suicide',
-        'kill myself',
-        'self harm',
-        'depressed',
-        'worthless',
-        'alone',
-        'die',
-        'give up',
-        'empty',
-        'hate my life',
-        'panic attack',
-        'anxiety attack',
-      ];
+    const isCrisis = crisisKeywords.some((word) => combinedText.includes(word));
 
-      const isCrisis = crisisKeywords.some((word) =>
-        combinedText.includes(word)
-      );
-
-    const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: 'gpt-3.5-turbo',
-
-        messages: [
-          {
-            role: 'system',
-            content: `
-You are an advanced emotional wellness AI assistant.
-
-Analyze the user's emotions carefully.
-
-Your response MUST follow this exact format:
-
+    const mockInsight = `
 Emotional Summary:
-...
+Based on your recent check-ins, you seem to be experiencing a mix of emotions. Acknowledging these feelings is a great first step towards balance.
 
 Detected Emotional Pattern:
-...
+There's a natural fluctuation in your mood, which is completely normal. Remember to give yourself grace on the harder days.
 
-Stress Level: X/10
+Stress Level: 6/10
 
-Happiness Score: X/10
+Happiness Score: 5/10
 
-Emotional Balance: X/10
+Emotional Balance: 5/10
 
 Wellness Advice:
-...
+Try to incorporate small moments of mindfulness into your day. Even 5 minutes of deep breathing can help reset your nervous system.
 
 Positive Encouragement:
-...
+You are doing your best, and that is more than enough. Keep prioritizing your mental wellness—you deserve it!
+`;
 
-Keep response supportive, empathetic, and under 180 words.
-`,
-          },
-
-          {
-            role: 'user',
-            content: `
-Recent moods:
-${moodData}
-
-Recent journals:
-${journalData}
-`,
-          },
-        ],
-      },
-
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
+    setTimeout(() => {
+      res.json({
+        success: true,
+        data: {
+          insight: mockInsight.trim(),
+          stressScore: 6,
+          happinessScore: 5,
+          balanceScore: 5,
+          isCrisis,
         },
-      }
-    );
-
-    const insight =
-      response.data.choices[0].message.content;
-
-    const stressMatch = insight.match(/Stress Level:\s*(\d+)/i);
-    const happinessMatch = insight.match(/Happiness Score:\s*(\d+)/i);
-    const balanceMatch = insight.match(/Emotional Balance:\s*(\d+)/i);
-
-    const stressScore = stressMatch ? Number(stressMatch[1]) : 5;
-    const happinessScore = happinessMatch ? Number(happinessMatch[1]) : 5;
-    const balanceScore = balanceMatch ? Number(balanceMatch[1]) : 5;
-
-    res.json({
-      success: true,
-      data: {
-        insight,
-        stressScore,
-        happinessScore,
-        balanceScore,
-        isCrisis,
-      },
-    });
+      });
+    }, 1500);
 
   } catch (error) {
-    console.error(error.response?.data || error.message);
-
+    console.error(error);
     res.status(500).json({
       success: false,
       message: 'Failed to analyze mood',
@@ -178,41 +93,28 @@ export const getJournalPrompt = async (req, res) => {
   try {
     const { currentMood } = req.body;
 
-    const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You generate thoughtful and emotional journaling prompts for mental wellness.',
-          },
-          {
-            role: 'user',
-            content: `Generate a short journaling prompt for someone feeling ${currentMood}.`,
-          },
-        ],
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const prompts = [
+      "What is one small thing that brought you comfort today?",
+      "Describe a feeling you've been avoiding lately. Why do you think it's hard to face?",
+      "If your current emotion had a color and a shape, what would it look like?",
+      "Write down three things you can forgive yourself for right now.",
+      "What would you tell a friend who is feeling exactly the way you are today?"
+    ];
+    
+    // Pick a random prompt
+    const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
 
-    res.json({
-      success: true,
-      data: {
-        prompt:
-          response.data.choices[0].message.content,
-      },
-    });
+    setTimeout(() => {
+      res.json({
+        success: true,
+        data: {
+          prompt: randomPrompt,
+        },
+      });
+    }, 800);
 
   } catch (error) {
-    console.error(error.response?.data || error.message);
-
+    console.error(error);
     res.status(500).json({
       success: false,
       message: 'Failed to generate prompt',
