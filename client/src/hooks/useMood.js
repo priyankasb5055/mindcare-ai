@@ -10,7 +10,7 @@ export const useMood = () => {
   const fetchMoods = useCallback(async (limit = 0) => {
     setLoading(true);
     try {
-      const res = await api.get(`/moods${limit ? `?limit=${limit}` : ''}`);
+      const res = await api.get(`/api/moods${limit ? `?limit=${limit}` : ''}`);
       if (res.data.success) {
         setMoods(res.data.data.moods);
         return res.data.data;
@@ -24,7 +24,7 @@ export const useMood = () => {
 
   const fetchMoodStats = useCallback(async () => {
     try {
-      const res = await api.get('/moods/stats');
+      const res = await api.get('/api/moods/stats');
       if (res.data.success) {
         setStats(res.data.data);
         return res.data.data;
@@ -36,7 +36,7 @@ export const useMood = () => {
 
   const createMood = async (moodData) => {
     try {
-      const res = await api.post('/moods', moodData);
+      const res = await api.post('/api/moods', moodData);
       if (res.data.success) {
         toast.success('Mood logged successfully!');
         // Optimistic update
@@ -51,7 +51,7 @@ export const useMood = () => {
 
   const deleteMood = async (id) => {
     try {
-      const res = await api.delete(`/moods/${id}`);
+      const res = await api.delete(`/api/moods/${id}`);
       if (res.data.success) {
         toast.success('Mood deleted');
         setMoods(prev => prev.filter(m => m._id !== id));

@@ -27,8 +27,8 @@ const Profile = () => {
       
       const fetchStats = async () => {
         try {
-          const moodRes = await api.get('/moods');
-          const journalRes = await api.get('/journals');
+          const moodRes = await api.get('/api/moods');
+          const journalRes = await api.get('/api/journals');
           setStats(prev => ({
             ...prev,
             totalMoods: moodRes.data.success ? moodRes.data.data.totalEntries : 0,

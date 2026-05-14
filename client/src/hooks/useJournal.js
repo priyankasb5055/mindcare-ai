@@ -9,7 +9,7 @@ export const useJournal = () => {
   const fetchJournals = useCallback(async (searchQuery = '') => {
     setLoading(true);
     try {
-      const res = await api.get(`/journals${searchQuery ? `?search=${searchQuery}` : ''}`);
+      const res = await api.get(`/api/journals${searchQuery ? `?search=${searchQuery}` : ''}`);
       if (res.data.success) {
         setJournals(res.data.data);
       }
@@ -22,7 +22,7 @@ export const useJournal = () => {
 
   const createJournal = async (journalData) => {
     try {
-      const res = await api.post('/journals', journalData);
+      const res = await api.post('/api/journals', journalData);
       if (res.data.success) {
         toast.success('Journal saved!');
         setJournals(prev => [res.data.data, ...prev]);
@@ -36,7 +36,7 @@ export const useJournal = () => {
 
   const updateJournal = async (id, journalData) => {
     try {
-      const res = await api.put(`/journals/${id}`, journalData);
+      const res = await api.put(`/api/journals/${id}`, journalData);
       if (res.data.success) {
         toast.success('Journal updated!');
         setJournals(prev => prev.map(j => j._id === id ? res.data.data : j));
@@ -50,7 +50,7 @@ export const useJournal = () => {
 
   const deleteJournal = async (id) => {
     try {
-      const res = await api.delete(`/journals/${id}`);
+      const res = await api.delete(`/api/journals/${id}`);
       if (res.data.success) {
         toast.success('Journal deleted');
         setJournals(prev => prev.filter(j => j._id !== id));
