@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Brain, Sparkles, Loader2 } from 'lucide-react';
+import { Send, Brain, Sparkles, Loader2, AlertTriangle, Phone, X } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import ChatBubble from '../components/ChatBubble';
@@ -17,6 +17,7 @@ const AICompanion = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showEmergencyAlert, setShowEmergencyAlert] = useState(false);
   
   const messagesEndRef = useRef(null);
 
@@ -55,9 +56,14 @@ const AICompanion = () => {
             role: 'assistant',
             content: res.data.data.reply,
             usage: res.data.data.usage,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            isCrisis: res.data.data.isCrisis
           }
         ]);
+        
+        if (res.data.data.isCrisis) {
+          setShowEmergencyAlert(true);
+        }
       }
     } catch (error) {
       toast.error('Failed to get response. Please try again.');
@@ -89,6 +95,40 @@ const AICompanion = () => {
         
         <main className="flex-1 flex flex-col overflow-hidden relative max-w-4xl mx-auto w-full">
           
+          {/* Emergency Alert Modal */}
+          {showEmergencyAlert && (
+            <div className="absolute top-4 left-4 right-4 z-50 bg-red-500/10 border border-red-500/50 backdrop-blur-md rounded-2xl p-5 shadow-2xl shadow-red-500/20 flex flex-col gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-2 text-red-500 font-bold text-lg">
+                  <AlertTriangle className="w-6 h-6 animate-pulse" />
+                  Immediate Support Available
+                </div>
+                <button onClick={() => setShowEmergencyAlert(false)} className="text-red-500/70 hover:text-red-500 transition-colors p-1">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <p className="text-textPrimary text-sm font-medium">
+                You do not have to go through this alone. There are people who want to help you right now.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3 mt-2">
+                <a href="tel:988" className="flex-1 flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-xl font-semibold transition-colors shadow-lg">
+                  <Phone className="w-5 h-5" />
+                  Call 988 (Crisis Lifeline)
+                </a>
+                <a href="sms:741741" className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-red-500/30 text-red-500 py-3 px-4 rounded-xl font-semibold transition-colors">
+                  <Send className="w-5 h-5" />
+                  Text HOME to 741741
+                </a>
+              </div>
+              
+              <p className="text-xs text-red-400/80 mt-1 text-center">
+                If you are in immediate danger, please call your local emergency services (911) or go to the nearest emergency room.
+              </p>
+            </div>
+          )}
+
           {/* Header */}
           <div className="p-4 lg:p-6 pb-2 shrink-0">
             <div className="flex items-center gap-3">

@@ -41,7 +41,8 @@ export const chatWithAI = async (req, res) => {
       return res.json({
         success: true,
         data: {
-          reply: "I’m really sorry you’re feeling this way. You do not have to go through this alone. Please contact a trusted person or mental health professional immediately. If you are in immediate danger, call your local emergency services or a crisis helpline now."
+          reply: "I’m really sorry you’re feeling this way. You do not have to go through this alone. Please contact a trusted person or mental health professional immediately. If you are in immediate danger, call your local emergency services or a crisis helpline now.",
+          isCrisis: true
         }
       });
     }
