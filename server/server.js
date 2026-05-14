@@ -19,7 +19,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://mindcare-ai-client.onrender.com",
+    origin: [
+      "https://mindcare-ai-client.onrender.com",
+      "https://mindcare-ai-xh8n.vercel.app",
+      "http://localhost:5173",
+      /\.vercel\.app$/
+    ],
     credentials: true,
   })
 );
