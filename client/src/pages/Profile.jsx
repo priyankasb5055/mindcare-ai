@@ -48,7 +48,7 @@ const Profile = () => {
     setIsSubmitting(true);
     
     try {
-      const res = await api.put('/auth/profile', { name, bio, profilePicture });
+      const res = await api.put('/api/auth/profile', { name, bio, profilePicture });
       if (res.data.success) {
         toast.success('Profile updated successfully');
         setUser(res.data.data);

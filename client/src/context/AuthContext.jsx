@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     const checkLoggedIn = async () => {
       if (token) {
         try {
-          const res = await api.get('/auth/me');
+          const res = await api.get('/api/auth/me');
           if (res.data.success) {
             setUser(res.data.data);
             setIsAuthenticated(true);
