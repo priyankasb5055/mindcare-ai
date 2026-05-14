@@ -12,9 +12,9 @@ export const chatWithAI = async (req, res) => {
     }
 
     const response = await axios.post(
-      'https://openrouter.ai/api/v1/chat/completions',
+      'https://api.openai.com/v1/chat/completions',
       {
-        model: 'openai/gpt-3.5-turbo',
+        model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',
@@ -29,7 +29,7 @@ export const chatWithAI = async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
           'Content-Type': 'application/json',
         },
       }
@@ -85,9 +85,9 @@ export const analyzeMood = async (req, res) => {
       );
 
     const response = await axios.post(
-      'https://openrouter.ai/api/v1/chat/completions',
+      'https://api.openai.com/v1/chat/completions',
       {
-        model: 'openai/gpt-3.5-turbo',
+        model: 'gpt-3.5-turbo',
 
         messages: [
           {
@@ -136,7 +136,7 @@ ${journalData}
 
       {
         headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
           'Content-Type': 'application/json',
         },
       }
@@ -179,9 +179,9 @@ export const getJournalPrompt = async (req, res) => {
     const { currentMood } = req.body;
 
     const response = await axios.post(
-      'https://openrouter.ai/api/v1/chat/completions',
+      'https://api.openai.com/v1/chat/completions',
       {
-        model: 'openai/gpt-3.5-turbo',
+        model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',
@@ -196,7 +196,7 @@ export const getJournalPrompt = async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
           'Content-Type': 'application/json',
         },
       }
